@@ -1,0 +1,138 @@
+//константы - состояния: 
+#define LAUNCH_STATE 0
+#define WAITING_STATE 1
+#define INFINITE_STATE 2
+#define MULTIPLE_STATE 3
+#define SINGLE_STATE 4 
+//////////////
+//константы - состояния
+#define WAITING_DRUM_MOVE 0
+#define WAITING_FALLING_STATE 1
+#define WAITITNG_LIFT_UP_STATE 2
+#define WAITING_CV_LAUNCH_STATE 3
+#define WAITING_CANT_STATE 4
+#define COUNT_STATE 5
+#define WAITING_LIFT_DOWN 6
+ 
+//Константы команды: 
+#define START_CMD 0x0 
+#define INFINITE_CMD 0x1
+#define MULTIPLE_CMD 0x2 
+#define SINGLE_CMD 0x3 
+#define DEBAG_CMD 0x4
+#define STOP_CMD 0x5
+ 
+int state = WAITING_STATE; 
+ 
+void setup(){ 
+} 
+ 
+ 
+int getCommand(){ 
+ int cmd = Serial.read(); 
+ return cmd; 
+} 
+ 
+void loop(){ 
+ int cmd = getCommand(); 
+ switch(state){ 
+  case INFINITE_STATE:{ 
+   infinite_handler(cmd); 
+   break; 
+  } 
+  case MULTIPLE_STATE:{ 
+   multiple_handler(cmd); 
+   break; 
+  } 
+  case SINGLE_STATE:{ 
+   single_hangler(cmd); 
+   break; 
+  } 
+  case DEBAG_SATE:{ 
+  debag_handler(cmd); 
+   break; 
+  } 
+ } 
+} 
+ 
+void single_hangler(cmd){ 
+  cycle_generation(); 
+} 
+
+void multiple_handler(int cmd, int count){
+  if (cmd != STOP_CMD){
+    for scor in range (count){
+      cycle_generation();
+      scor += 1;
+      }
+  }
+  state = WAITING_STATE;
+  start();
+return;
+}
+
+void infinite_handler(cmd){ 
+  if (cmd != STOP_CMD){ 
+    cycle_generation(); 
+  } 
+  state = WAITING_STATE; 
+  start(); 
+} 
+ 
+ 
+ 
+void cycle_generation(){ 
+  start_dram(); 
+  stop_dram(); 
+  unload_dram(); 
+  delay(WAITING_FALLING_STATE); 
+  lift_up_cmd(); 
+  delay(WAITITNG_LIFT_UP_STATE); 
+  cv_launch(); 
+  delay(WAITING_CV_LAUNCH_STATE); 
+  drum_move(); 
+  delay(WAITING_DRAM_MOVE); 
+  cant(); 
+  delay(WAITING_CANT_STATE); 
+  lift_dawn(); 
+  delay(WAITING_LIFT_DOWN); 
+}
+
+void start(){
+  drum_move();
+  lift_dawn();
+}
+
+void debag_handler(){ 
+ int cmd = getCommand(); 
+ switch(state){ 
+  case EDIT_DRUM_TIME_STATE:{ 
+   edit_drum_time_handler(cmd); 
+   break; 
+  } 
+  case ROTATE_DRUM_STATE:{ 
+   rotate_drum_handler(cmd); 
+   break; 
+  } 
+  case LIFT_UP_STATE:{ 
+   lift_up_handlier(cmd); 
+   break; 
+  } 
+  case START_CV_STATE:{ 
+  start_CV_handler(cmd); 
+   break; 
+  } 
+  case LIFT_CANT_STATE:{ 
+   lift_cant_handlier(cmd); 
+   break; 
+  } 
+  case LIFT_DAWN_STATE:{ 
+   lift_dawn_handler(cmd); 
+   break; 
+  } 
+  case FALLING_STATE: { 
+   falling_hadler(cmd); 
+   break; 
+  } 
+ } 
+} 
