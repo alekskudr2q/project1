@@ -1,0 +1,253 @@
+#include <Arduino.h> 
+#include <Servo.h> 
+ 
+ 
+//Device pin 
+#define DRUM_SERVO_PIN D2 
+#define LIFT_SERVO_PIN D3 
+#define CANT_SERVO_PIN D4 
+#define END_SENSOR_PIN D5 
+#define HALL_SENSOR_PIN D6 
+ 
+//константы - состояния:  
+#define LAUNCH_STATE 0  
+#define WAITING_STATE 1  
+#define INFINITE_STATE 2  
+#define MULTIPLE_STATE 3  
+#define SINGLE_STATE 4
+#define DEBUG_STATE 5  
+ 
+#define EDIT_DRUM_TIME_STATE 6
+#define ROTATE_DRUM_STATE 7
+#define LIFT_UP_STATE 8
+#define START_CV_STATE 9 
+#define LIFT_CANT_STATE 10 
+#define LIFT_DAWN_STATE 11
+#define FALLING_STATE 12
+  
+#define WAITING_DRUM_MOVE 0  
+#define WAITING_FALLING_STATE 1  
+#define WAITITNG_LIFT_UP_STATE 2  
+#define WAITING_CV_LAUNCH_STATE 3  
+#define WAITING_CANT_STATE 4  
+#define WAITING_UNCANT_STATE 5  
+#define COUNT_STATE 6  
+#define WAITING_LIFT_DOWN 7  
+ 
+//Константы команды:  
+#define START_CMD     'S' 
+#define INFINITE_CMD  'I' 
+#define MULTIPLE_CMD  'M'  
+#define SINGLE_CMD    'N' 
+#define DEBUG_CMD     'D' 
+#define STOP_CMD      'P'  
+ 
+int state = WAITING_STATE;  
+ 
+void setup(){  
+}  
+ 
+void start_drum(){ 
+   
+} 
+ 
+void stop_drum(){ 
+   
+} 
+ 
+void unload_drum(){ 
+ 
+} 
+ 
+void lift_up_cmd(){ 
+ 
+} 
+ 
+void cv_launch(){ 
+ 
+} 
+ 
+void drum_move(){ 
+ 
+} 
+ 
+void cant(){ 
+ 
+} 
+ 
+void uncant(){ 
+ 
+} 
+ 
+void lift_dawn(){ 
+ 
+} 
+void cycle_generation(){  
+  start_drum();  
+  stop_drum();  
+  unload_drum();  
+  delay(WAITING_FALLING_STATE);  
+  lift_up_cmd();  
+  delay(WAITITNG_LIFT_UP_STATE);  
+  cv_launch();  
+  delay(WAITING_CV_LAUNCH_STATE);  
+  drum_move();  
+  delay(WAITING_DRUM_MOVE);  
+  cant();  
+  delay(WAITING_CANT_STATE);  
+  uncant();  
+  delay(WAITING_UNCANT_STATE);  
+  lift_dawn();  
+  delay(WAITING_LIFT_DOWN); 
+}  
+ 
+char getCommand(){  
+  char cmd = Serial.read();  
+  return cmd;  
+}  
+
+void waitingST_handler(char cmd){ 
+ switch (cmd){
+  case INFINITE_CMD:{
+    state = INFINITE_STATE;
+    break;
+  }
+  case MULTIPLE_CMD:{
+    state = MULTIPLE_STATE;
+    break;  
+  }
+  case SINGLE_CMD:{
+    state = SINGLE_STATE;
+    break;  
+  }
+  case DEBUG_CMD:{
+    state = DEBUG_STATE;
+    break;  
+  }
+ }
+} 
+
+void single_hangler(char cmd){  
+  cycle_generation(); 
+  state = WAITING_STATE;
+  start(); 
+}  
+ 
+void multiple_handler(char cmd){  
+  int count = Serial.parseInt();
+  if (cmd != STOP_CMD){  
+    for (int i=0; i < count; i++){  
+      cycle_generation(); 
+    } 
+  }  
+  state = WAITING_STATE;  
+  start();   
+}  
+ 
+void infinite_handler(char cmd){  
+  if (cmd != STOP_CMD){  
+     cycle_generation();  
+     }  
+  state = WAITING_STATE;  
+  start();  
+}  
+ 
+void start(){  
+  drum_move();  
+  lift_dawn();  
+  uncant();  
+}  
+ 
+void edit_drum_time_handler(char cmd){ 
+ 
+} 
+ 
+void rotate_drum_handler(char cmd){ 
+ 
+} 
+ 
+void lift_up_handlier(char cmd){ 
+ 
+} 
+ 
+void start_CV_handler(char cmd){ 
+ 
+} 
+ 
+void lift_cant_handlier(char cmd){ 
+ 
+} 
+ 
+void lift_dawn_handler(char cmd){ 
+ 
+} 
+ 
+void falling_hadler(char cmd){ 
+ 
+} 
+void debug_handler(char cmd){  
+  cmd = getCommand();  
+  switch(state){  
+    case EDIT_DRUM_TIME_STATE:{  
+      edit_drum_time_handler(cmd);  
+    state = WAITING_STATE;
+      break;  
+    }  
+    case ROTATE_DRUM_STATE:{  
+      rotate_drum_handler(cmd);  
+    state = WAITING_STATE;
+      break;  
+    }  
+   case LIFT_UP_STATE:{  
+      lift_up_handlier(cmd);  
+    state = WAITING_STATE;
+      break;  
+    }  
+   case START_CV_STATE:{  
+      start_CV_handler(cmd);  
+    state = WAITING_STATE;
+      break;  
+    }  
+    case LIFT_CANT_STATE:{  
+      lift_cant_handlier(cmd); 
+    state = WAITING_STATE;
+      break;  
+    }  
+    case LIFT_DAWN_STATE:{  
+      lift_dawn_handler(cmd);
+    state = WAITING_STATE;
+      break;  
+    }  
+    case FALLING_STATE: {  
+      falling_hadler(cmd);
+    state = WAITING_STATE;
+      break;  
+    }  
+  }  
+} 
+
+void loop(){  
+  char cmd = getCommand();  
+  switch(state){  
+    case INFINITE_STATE:{  
+      infinite_handler(cmd);  
+      break;  
+    }  
+    case MULTIPLE_STATE:{  
+      multiple_handler(cmd);  
+      break;  
+    }  
+    case SINGLE_STATE:{  
+      single_hangler(cmd);  
+      break;  
+    }  
+    case DEBUG_STATE:{  
+      debug_handler(cmd);  
+      break;
+   }  
+    case WAITING_STATE:{
+      waitingST_handler(cmd);
+      break;
+    }  
+  }  
+}
