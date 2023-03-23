@@ -1,0 +1,271 @@
+import tkinter as tk
+from tkinter import ttk
+
+LARGEFONT = ("Verdana", 35)
+
+
+class tkinterApp(tk.Tk):
+
+    def __init__(self, *args, **kwargs):
+
+        tk.Tk.__init__(self, *args, **kwargs)
+
+        container = tk.Frame(self)
+        container.pack(side="top", fill="none", expand=True)
+
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+
+        self.frames = {}
+
+        for F in (home,
+                  multiple_launch,
+                  debug,
+                  history,
+                  debug_dram_time,
+                  TScubes,
+                  result,
+                  success_debug):
+
+            frame = F(container, self)
+
+            self.frames[F] = frame
+
+            frame.grid(row=0, column=0, sticky="nsew")
+
+        self.show_frame(home)
+
+    def show_frame(self, cont):
+
+        frame = self.frames[cont]
+        frame.tkraise()
+
+
+class home(tk.Frame):
+
+    def __init__(self, parent, controller):
+
+        tk.Frame.__init__(self, parent)
+
+        label = ttk.Label(self, text="home", font=LARGEFONT)
+        label.grid(row=0, column=4, padx=10, pady=10)
+
+        button1 = ttk.Button(self, text="single launch", command=lambda: controller.show_frame(result))
+        button1.grid(row=1, column=1, padx=10, pady=10)
+
+        button2 = ttk.Button(self, text="multiple_launch", command=lambda: controller.show_frame(multiple_launch))
+        button2.grid(row=2, column=1, padx=10, pady=10)
+
+        button3 = ttk.Button(self, text="infinity launch", command=lambda: controller.show_frame(result))
+        button3.grid(row=3, column=1, padx=10, pady=10)
+
+        button4 = ttk.Button(self, text="debug", command=lambda: controller.show_frame(debug))
+        button4.grid(row=4, column=1, padx=10, pady=10)
+
+
+
+class multiple_launch(tk.Frame):
+    count = 5
+    def __init__(self, parent, controller):
+
+        def up():
+            multiple_launch.count += 1
+            my_text = str(multiple_launch.count)
+            label1.config(text=my_text)
+
+        def down():
+
+            if multiple_launch.count == 1:
+                pass
+
+            else:
+                multiple_launch.count -= 1
+                my_text = str(multiple_launch.count)
+                label1.config(text=my_text)
+
+        tk.Frame.__init__(self, parent)
+
+        label = ttk.Label(self, text="how many?", font=LARGEFONT)
+        label.grid(row=0, column=4, padx=10, pady=10)
+
+        label1 = ttk.Label(self, text="5", font=LARGEFONT)
+        label1.grid(row=1, column=4, padx=10, pady=10)
+
+        my_text = str(multiple_launch.count)
+        label1.config(text=my_text)
+
+        button1 = ttk.Button(self, text="back", command=lambda: controller.show_frame(home))
+        button1.grid(row=4, column=1, padx=10, pady=10)
+
+        button2 = ttk.Button(self, text="further", command=lambda: controller.show_frame(result))
+        button2.grid(row=3, column=1, padx=10, pady=10)
+
+        button3 = ttk.Button(self, text="больше", command=up)
+        button3.grid(row=5, column=1, padx=10, pady=10)
+
+        button4 = ttk.Button(self, text="меньше", command=down)
+        button4.grid(row=6, column=1, padx=10, pady=10)
+
+
+class result(tk.Frame):
+    def __init__(self, parent, controller):
+
+        tk.Frame.__init__(self, parent)
+
+        label = ttk.Label(self, text="result", font=LARGEFONT)
+        label.grid(row=0, column=4, padx=10, pady=10)
+
+        button1 = ttk.Button(self, text="home",command=lambda: controller.show_frame(home))
+        button1.grid(row=1, column=1, padx=10, pady=10)
+
+        button2 = ttk.Button(self, text="history", command=lambda: controller.show_frame(history))
+        button2.grid(row=2, column=1, padx=10, pady=10)
+
+        button3 = ttk.Button(self, text="further", command=lambda: controller.show_frame(home))
+        button3.grid(row=3, column=1, padx=10, pady=10)
+
+        button4 = ttk.Button(self, text="stop", command=lambda: controller.show_frame(home))
+        button4.grid(row=4, column=1, padx=10, pady=10)
+
+
+class debug(tk.Frame):
+
+    def __init__(self, parent, controller):
+
+        tk.Frame.__init__(self, parent)
+
+        label = ttk.Label(self, text="отладка", font=LARGEFONT)
+        label.grid(row=1, column=4, padx=10, pady=10)
+
+        button1 = ttk.Button(self, text="home",  command=lambda: controller.show_frame(home))
+        button1.grid(row=1, column=1, padx=10, pady=10)
+
+        button2 = ttk.Button(self, text="back", command=lambda: controller.show_frame(home))
+        button2.grid(row=2, column=1, padx=10, pady=10)
+
+        button3 = ttk.Button(self, text="изменение времени вращения барабана",  command=lambda: controller.show_frame(debug_dram_time))
+        button3.grid(row=3, column=1, padx=10, pady=10)
+
+        button4 = ttk.Button(self, text="сброс кубиков из барабана", command=lambda: controller.show_frame(success_debug))
+        button4.grid(row=4, column=1, padx=10, pady=10)
+
+        button5 = ttk.Button(self, text="вращать барабан",  command=lambda: controller.show_frame(success_debug))
+        button5.grid(row=5, column=1, padx=10, pady=10)
+
+        button6 = ttk.Button(self, text="система транспортировки кубиков", command=lambda: controller.show_frame(TScubes))
+        button6.grid(row=6, column=1, padx=10, pady=10)
+
+        button7 = ttk.Button(self, text="запуск СТЗ", command=lambda: controller.show_frame(success_debug))
+        button7.grid(row=7, column=1, padx=10, pady=10)
+
+
+class history(tk.Frame):
+
+    def __init__(self, parent, controller):
+
+        tk.Frame.__init__(self, parent)
+
+        label = ttk.Label(self, text="history", font=LARGEFONT)
+        label.grid(row=1, column=4, padx=10, pady=10)
+
+        button1 = ttk.Button(self, text="back", command=lambda: controller.show_frame(result))
+        button1.grid(row=2, column=1, padx=10, pady=10)
+
+
+class debug_dram_time(tk.Frame):
+    time = 15000
+    MIN_TIME_DRAW = 10 # в секундах
+    def __init__(self, parent, controller):
+
+        def time_up():
+            debug_dram_time.time += 1000
+            my_text = str(debug_dram_time.time//1000)
+            label1.config(text=my_text)
+
+        def time_down():
+            if debug_dram_time.time == debug_dram_time.MIN_TIME_DRAW * 1000:
+                pass
+            else:
+                debug_dram_time.time -= 1000
+                my_text = str(debug_dram_time.time//1000)
+                label1.config(text=my_text)
+
+        tk.Frame.__init__(self, parent)
+
+        label = ttk.Label(self, text="время вращения:", font=LARGEFONT)
+        label.grid(row=1, column=4, padx=10, pady=10)
+
+        label1 = ttk.Label(self, text="hhh", font=LARGEFONT)
+        label1.grid(row=2, column=4, padx=10, pady=10)
+
+        my_text = str(debug_dram_time.time//1000)
+        label1.config(text=my_text)
+
+        button1 = ttk.Button(self, text="больше", command=time_up)
+        button1.grid(row=3, column=1, padx=10, pady=10)
+
+        button2 = ttk.Button(self, text="меньше", command=time_down)
+        button2.grid(row=4, column=1, padx=10, pady=10)
+
+        button3 = ttk.Button(self, text="back", command=lambda: controller.show_frame(debug))
+        button3.grid(row=5, column=1, padx=10, pady=10)
+
+
+class TScubes(tk.Frame):
+
+    def __init__(self, parent, controller):
+
+        tk.Frame.__init__(self, parent)
+
+        label = ttk.Label(self, text="система транспортировки кубиков", font=LARGEFONT)
+        label.grid(row=1, column=4, padx=10, pady=10)
+
+        button1 = ttk.Button(self, text="home", command=lambda: controller.show_frame(home))
+        button1.grid(row=1, column=1, padx=10, pady=10)
+
+        button2 = ttk.Button(self, text="back", command=lambda: controller.show_frame(debug))
+        button2.grid(row=2, column=1, padx=10, pady=10)
+
+        button3 = ttk.Button(self, text="поднять", command=lambda: controller.show_frame(debug_dram_time))
+        button3.grid(row=3, column=1, padx=10, pady=10)
+
+        button4 = ttk.Button(self, text="опустить", command=lambda: controller.show_frame(home))
+        button4.grid(row=4, column=1, padx=10, pady=10)
+
+        button5 = ttk.Button(self, text="перевернуть", command=lambda: controller.show_frame(home))
+        button5.grid(row=5, column=1, padx=10, pady=10)
+
+
+class success_debug(tk.Frame):
+
+    def __init__(self, parent, controller):
+
+        tk.Frame.__init__(self, parent)
+
+        label = ttk.Label(self, text="успешно", font=LARGEFONT)
+        label.grid(row=1, column=4, padx=10, pady=10)
+
+        button1 = ttk.Button(self, text="home", command=lambda: controller.show_frame(home))
+        button1.grid(row=1, column=1, padx=10, pady=10)
+
+        button2 = ttk.Button(self, text="back", command=lambda: controller.show_frame(debug))
+        button2.grid(row=2, column=1, padx=10, pady=10)
+
+
+class fail_debug(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        label = ttk.Label(self, text="ошибка", font=LARGEFONT)
+        label.grid(row=1, column=4, padx=10, pady=10)
+
+        button1 = ttk.Button(self, text="home", command=lambda: controller.show_frame(home))
+        button1.grid(row=1, column=1, padx=10, pady=10)
+
+        button2 = ttk.Button(self, text="back", command=lambda: controller.show_frame(debug))
+        button2.grid(row=2, column=1, padx=10, pady=10)
+
+
+app = tkinterApp()
+app.mainloop()
